@@ -1,25 +1,29 @@
 from flask import Flask, request, jsonify
 from waitress import serve
+import json
 
 app = Flask(__name__)
 
-@app.route('/endpoint1', methods=['POST'])
-def endpoint1():
-    data = request.json
-    parameter = data.get('parameter', None)
-    return jsonify({'result': 'Endpoint 1', 'parameter': parameter})
+offers = []
 
-@app.route('/endpoint2', methods=['POST'])
-def endpoint2():
+@app.route('/addOffer', methods=['POST'])
+def addOffer():
     data = request.json
-    parameter = data.get('parameter', None)
-    return jsonify({'result': 'Endpoint 2', 'parameter': parameter})
+    offer = data.get('offer', None)
+    offers.append({len(offers) : offer})
+    return jsonify({'Offer added': offer})
 
-@app.route('/endpoint3', methods=['POST'])
-def endpoint3():
-    data = request.json
-    parameter = data.get('parameter', None)
-    return jsonify({'result': 'Endpoint 3', 'parameter': parameter})
+@app.route('/getOffers', methods=['GET'])
+def getOffers():
+    return jsonify(offers)
 
-if __name__ == "__main__":
+@app.route('/flushOffers', methods=['POST'])
+def flushOffers():
+    offers.clear()
+    return []
+
+if __name__ == '__main__':
+    # Debug/Development
+    # .run(debug=True)
+    # Production
     serve(app, host="0.0.0.0", port=9999)
